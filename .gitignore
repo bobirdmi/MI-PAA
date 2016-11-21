@@ -8,3 +8,6 @@ __pycache__/
 
 # unzipped data for experiments
 data/*/
+
+# .exe files
+**/*.exe
