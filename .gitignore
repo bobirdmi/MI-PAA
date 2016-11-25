@@ -11,3 +11,6 @@ data/*/
 
 # .exe files
 **/*.exe
+
+# .txt files
+knapgen/*.txt
