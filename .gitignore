@@ -13,4 +13,4 @@ data/*/
 **/*.exe
 
 # .txt files
-knapgen/*.txt
+knapgen/*.inst.dat
