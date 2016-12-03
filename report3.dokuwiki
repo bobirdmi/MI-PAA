@@ -1,0 +1,98 @@
+====== Zpráva k 3. úloze ======
+===== Specifikace =====
+==== Úloha ====
+Lze přečíst [[homeworks:03:start|zde]].
+
+==== Hardware & Software ====
+Notebook s:
+  * Windows 8.1 64-bit
+  * Intel Core i7-3630QM 
+  * 8GB RAM
+  * Jupyter Notebook s python 3.5
+
+===== Možné varianty řešení =====
+V rámci zadání byly prozkoumány následující metody:
+  * [[student:bobirdmi:start:report2#reseni_metodou_b_b_branch_and_bound|metoda větví a hranic]]
+  * [[student:bobirdmi:start:report2#reseni_metodou_dynamickeho_programovani_dekompozice_podle_ceny|dynamické programování (dekompozice podle ceny)]]
+  * [[student:bobirdmi:start:report1#reseni_heuristikou|heuristika - poměr cena/váha]]
+
+Metoda [[student:bobirdmi:start:report1#reseni_hrubou_silou_bruteforce|bruteforce]] nebyla uvedena, jelikož z její popisu je zřejmé, že tato metoda je vůbec necitlivá na hodnoty parametrů generátoru instancí (kromě //n//, ale tohle již bylo prozkoumáno v [[student:bobirdmi:start:report1|1. úloze]]).
+
+===== Hodnoty parametrů generátoru instancí =====
+Hodnoty [[homeworks:knapsack:generator#implementace|generátoru]] byly zafixovány na
+  * n = 20 (počet věcí)
+  * N = 20 (počet instancí)
+  * m = 0.5 (poměr kapacity batohu k sumární váze)
+  * W = 100 (maximální váha věci)
+  * C = 250 (maximální cena věci)
+  * k = 1 (exponent granularity)
+  * d = 0 (-1..více malých věcí, 1..více velkých věcí, 0..rovnováha)
+
+Jednotlivé parametry plynule měníme, ostatní zůstávají zafixované.
+
+==== Testované parametry generátoru ====
+Během experimentů byly pozorovány závislosti výpočetního času a relativní chyby (v případě heuristiky) na:
+  * maximální váze věcí (W)
+  * maximální ceně věcí (C)
+  * poměru kapacity batohu k sumární váze (m)
+  * granularitě (exponent granularity //k//)
+
+===== Výsledky =====
+==== Měření výpočetního času ====
+<note important>
+Grafy výpočetního času zvolených metod byli rozděleny do dvou různých obrázků, jelikož čas běhu zvolené heuristiky je mnohem menší než dalších algoritmů (B&B a dynam. programování s dekompozicí podle ceny), a tedy čas běhu heuristiky prostě není vidět na společném obrázku.
+</note>
+
+{{:student:bobirdmi:start:hw3_maximum_cost_manipulation_time_comparison.png?900|}}
+
+{{:student:bobirdmi:start:hw3_maximum_cost_manipulation_heuristic.png?900|}}
+
+{{:student:bobirdmi:start:hw3_maximum_weight_manipulation_time_comparison.png?900|}}
+
+{{:student:bobirdmi:start:hw3_maximum_weight_manipulation_heuristic.png?900|}}
+
+{{:student:bobirdmi:start:hw3_knapsack_capacity_to_total_weight_ratio_manipulation_time_comparison.png?900|}}
+
+{{:student:bobirdmi:start:hw3_knapsack_capacity_to_total_weight_ratio_manipulation_heuristic.png?900|}}
+
+{{:student:bobirdmi:start:hw3_granularity_exponent_manipulation_time_comparison.png?900|}}
+
+{{:student:bobirdmi:start:hw3_granularity_exponent_manipulation_heuristic.png?900|}}
+
+==== Měření relativní chyby zvolené heuristiky ====
+{{:student:bobirdmi:start:hw3_relative_error_of_heuristic_in_case_of_max_cost_manipulation.png?900|}}
+
+{{:student:bobirdmi:start:hw3_relative_error_of_heuristic_in_case_of_max_weight_manipulation.png?900|}}
+
+{{:student:bobirdmi:start:hw3_relative_error_of_heuristic_in_case_of_ratio_m_manipulation.png?900|}}
+
+{{:student:bobirdmi:start:hw3_relative_error_of_heuristic_in_case_of_granularity_exponent_manipulation.png?900|}}
+
+===== Závěr =====
+Z obrázků můžeme odvodit, že:
+  * B&B
+    * **nezávisí** na parametru //max. cena// (jsou tam výkyvy v intervalu 0.05s-0.11s, avšak kvůli závislosti na pořadí prohledávání)
+    * **nezávisí** na parametru //max. váha// (ale opět závisí na pořadí prohledávání, t.j. jak rychle začne ořezávat strom možností)
+    * **závisí** na parametru //poměr kapacity batohu k sumární váze//, a to tak, že
+      * ořezávání stromu se provádí velmi rychle při malé hodnotě parametru (do 0.2)  - rychlý běh algoritmu
+      * při velké hodnotě parametru (od 0.6) skoro všechny věci patří do batohu a tedy již první pokusy dají skoro optimální řešení, což opět vede k rychlému ořezávání možností.
+      * hodnoty parametru v intervalu 0.3-0.5 vedou k tomu, že skoro půlka věcí patří do batohu, a v tomto případě metoda musí prozkoumat nejvíce možností.
+    * čas běhu **klesá** s rostoucí //granularitou//
+  * dynamické programování (dekompozice podle ceny)
+    * čas běhu **roste lineárně** s rostoucím parametrem //max. cena// (což bylo očekáváno když složitost algoritmu je O(C<sub>max</sub>*n))
+    * **nezávisí** na parametru //max. váha//
+    * **nezávisí** na parametru //poměr kapacity batohu k sumární váze//
+    * **nezávisí** na parametru //granularita//
+  * heuristika: poměr "cena/váha"
+    * čas běhu **nezávisí** na parametru //max. cena//
+    * čas běhu **roste lineárně** (ale velmi pomalu) s rostoucím parametrem //max. váha//
+    * čas běhu **roste lineárně** s rostoucím parametrem //poměr kapacity batohu k sumární váze//
+      * s větším poměrem přidáváme více věcí, tedy čas běhu roste
+    * čas běhu **nezávisí** na parametru //granularita//
+    * relativní chyba (průměrná a maximální) **roste lineárně** (ale velmi pomalu) s rostoucím parametrem //max. cena//
+    * maximální relativní chyba **roste lineárně** (velmi pomalu) s rostoucím parametrem //max. váha//
+    * průměrná relativní chyba **nezávisí** na parametru //max. váha//
+    * relativní chyba (průměrná a maximální) **klesá** s rostoucím parametrem //poměr kapacity batohu k sumární váze//
+    * relativní chyba (průměrná a maximální) **nezávisí** na parametru //granularita//
+
+Kvalitu výsledků v testovaném intervalu hodnot považuji za výbornou. Problém může nastat v případě, že testovaný interval hodnot byl příliš malý a nezachytil podstatné okamžiky průběhu algoritmů.

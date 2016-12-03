@@ -1,0 +1,109 @@
+====== Zpráva k 2. úloze ======
+===== Specifikace =====
+==== Úloha ====
+Lze přečíst [[homeworks:02:start|zde]].
+
+==== Hardware & Software ====
+Notebook s:
+  * Windows 8.1 64-bit
+  * Intel Core i7-3630QM 
+  * 8GB RAM
+  * Jupyter Notebook s python 3.5
+
+===== Možné varianty řešení =====
+Úloha by mohla být vyřešena několika metodami:
+  * B&B (Branch and Bound)
+  * dynamické programování (dekompozice podle ceny)
+  * FPTAS algoritmem (tj. s použitím modifikovaného dynamického programování s dekompozicí podle ceny)
+   
+===== Popis postupů řešení včetně popisu algoritmů =====
+==== Řešení metodou B&B (Branch and Bound) ====
+Metoda větví a hranic je vždy založena na ořezávání stavového prostoru pomocí cenové funkce problému. V případě problému batohu je to cena batohu.
+Budeme-li tedy řešit problém batohu pomocí rekurze, je možné uchovávat si v průběhu prohledávání nejlepší zatím dosažené řešení. Při každém volání rekurze lze pak kontrolovat, zda potenciální řešení získané z této větve rekurze nebude mít cenu nižší, než je zatím nejlepší dosažené. Pokud toto zjistím, je zbytečné tuto větev rekurze volat. 
+
+Další ořezávání je možné podle kapacity batohu: je zbytečné volat větev rekurze, pokud přidáním její kořene překročíme kapacitu batohu.
+
+Jinými slovy použijeme ořezávání shora (překročení kapacity batohu) i zdola (stávající řešení nemůže být lepší než nejlepší dosud nalezené).
+
+=== Popis kostry algoritmu ===
+  - na začátku máme prázdný batoh
+  - voláme funkci //branch_and_bound(flag)//
+    * pro levý podstrom s //flag=1// (přidáváme první věc)
+    * pro pravý podstrom s //flag=0// (nepřidáváme první věc)
+  - pokud přidáváme věc a překročíme kapacitu batohu
+    * ořízneme tento podstrom
+  - pokud současné řešení je lepší než nejlepší zatím dosažené
+    * přepišeme staré řešení
+  - pokud potenciální řešení získané z této větve rekurze má cenu nižší, než je zatím nejlepší dosažené
+    * ořízneme tento podstrom
+  - voláme funkci //branch_and_bound(flag)//
+    * pro levý podstrom s //flag=1// (přidáváme další věc)
+    * pro pravý podstrom s //flag=0// (nepřidáváme další věc)
+  - pokračujeme v bodě 3 dokud neprohledáme celý strom
+
+==== Řešení metodou dynamického programování (dekompozice podle ceny)====
+Označme E(i, c) instanci 0/1 inverzního problému batohu se zadanou cenou c, která vznikne z řešené instance omezením na prvých i věcí. Označme dále W(i, c) sumární hmotnost věcí řešené instance. Pak platí
+  * W(0,0) = 0
+  * W(0,c) = ∞ pro všechna c > 0
+  * W(i, c) = min(W(i-1, c), W(i-1, c-c<sub>i</sub>)+w<sub>i</sub>) pro všechna i > 0.
+
+Z výsledných řešení W(n, c) vybereme řešení, pro které je W(n, c) < M pro největší c. 
+
+Postup řešení lze formulovat buď rekurzí (řešit problémy E(n, c) pro všechna c a rekurzivně potřebné podproblémy) nebo dopředně - začít s E(0, c) pro všechna c a generovat všechna možná řešení problémů E(i, c) pro i = 1, … , n. V našem případě budeme používat **dopředný** postup řešení.
+
+=== Popis kostry algoritmu ===
+  - inicializujeme pole //(n + 1)*(∑c<sub>i</sub> + 1)// (máme nultou cenu a nulté //n//)
+  - nastavíme původní hodnoty pole:
+    * W(0,0) = 0
+    * W(0,c) = ∞ pro všechna c > 0
+    * W(n,0) = 0 pro všechna n > 0
+  - začínáme od W(1,1) a pokračujeme po řádcích (tedy zafixujeme //c// a měníme //n//)
+    * pokud //c-c<sub>i</sub> < 0// 
+      * W(i, c) = min(W(i-1, c), W(i-1, inf))
+    * pokud //c-c<sub>i</sub> ≥ 0//
+      * W(i, c) = min(W(i-1, c), W(i-1, c-c<sub>i</sub>)+w<sub>i</sub>)
+  - na konci procházíme poslední sloupec pole úplně ze shora (tedy začínáme od W(n,∑c<sub>i</sub>))
+    * první W(n,c) ≤ M je hledané nejlepší řešení
+
+==== Řešení FPTAS algoritmem====
+Zvolíme přesnost zobrazení ε a spočítáme //c<sub>i</sub>’//:
+  * C<sub>M</sub> = max(c<sub>1</sub>,c<sub>2</sub>,...,c<sub>n</sub>)
+  * K = ε * C<sub>M</sub> / n
+  * c<sub>i</sub>’ = dolní část(c<sub>i</sub> / K)
+
+Pak spustíme metodu dynamického programování s dekompozicí podle ceny, ale vyměníme původní ceny c<sub>i</sub> za právě spočítané c<sub>i</sub>’.
+
+Nalezenou nejlepší cenu pak musíme transformovat zpět následujícím způsobem:
+  * horní část(//result_cost * K//)
+
+=== Popis kostry algoritmu ===
+Algoritmus se liší od metody dynamického programování jenom počateční úpravou cen a transformací nalezené ceny.
+
+===== Výsledky =====
+<note important>
+Řešení problému s //n=35// jsem se už nedočkal, proto níže jsou zobrazené výsledky naměřené do velikosti instance //n=32// (včetně).
+</note>
+
+{{:student:bobirdmi:start:average_time_of_bruteforce_b_b_dynamic_and_fptas_algorithms_up_to_n_22.png?900|}}
+
+{{:student:bobirdmi:start:average_time_of_b_b_dynamic_programming_and_fptas_algorithms_up_to_n_32.png?900|}}
+
+Na následujících obrázcích maximální a průměrné relativní chyby FPTAS algoritmu s //eps=0.001// mají hodnotu 0, a proto jsou nerozlišitelné.
+{{:student:bobirdmi:start:average_relative_error_of_fptas.png?900|}}
+
+{{:student:bobirdmi:start:maximum_relative_error_of_fptas.png?900|}}
+
+
+===== Závěr =====
+Z obrázků můžeme odvodit:
+  * s **rostoucí** přesností zobrazení (eps) **roste** i čas běhu FPTAS algoritmu
+  * **nejrychlejší** je metoda dynamického programování (dekompozice podle cen)
+  * čas běhu metody dynamického programovaní a FPTAS algoritmu (který je úpravou DP) roste **polynomiálně** (složitost DP je pseudopolynomiální)
+  * při malé hodnotě //n// (v našem případě do //n=15//) doba výpočtu všech algoritmů je skoro stejná až na FPTAS algoritmus s //eps=0.001//
+  * chybovost FPTAS algoritmu **závisí** na zvolené přesnosti zobrazení //eps//
+      * hodnota //eps// udává **největší možnou** relativní chybu (tedy aktuální rel. chyby nikdy nepřekročí tuto hodnotu)
+  * chybovost FPTAS algoritmu (s libovolnou přesností zobrazení) **klesá** s rostoucí hodnotou //n//
+  * **nejmenší chybovost** má FPTAS algoritmus s //eps=0.001//
+      * dokonce je nulová
+
+Kvalitu výsledků považuji za výbornou. Chování algoritmů z dlouhodobého hlediska je z naměřených výsledků zřejmé.

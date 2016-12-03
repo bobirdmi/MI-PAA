@@ -1,0 +1,71 @@
+====== Zpráva k 1. úloze ======
+===== Specifikace =====
+==== Úloha ====
+Lze přečíst [[homeworks:01:start|zde]].
+
+==== Hardware & Software ====
+Notebook s:
+  * Windows 8.1 64-bit
+  * Intel Core i7-3630QM 
+  * 8GB RAM
+  * Jupyter Notebook s python 3.5
+
+===== Možné varianty řešení =====
+Úloha by mohla být vyřešena několika způsoby:
+  * hrubou silou
+  * heuristikou
+    * podle klesajícího poměru cena/váha
+    * podle rostoucí hmotnosti
+    * podle klesající ceny
+
+===== Popis postupů řešení včetně popisu algoritmů =====
+==== Řešení hrubou silou (bruteforce) ====
+Postupně testujeme všechny možné varianty a výsledek víme až po otestování poslední varianty.
+
+=== Popis kostry algoritmu ===
+Máme několik párů "cena/váha" a každému z nich přiřadíme bud' 0 nebo 1 na základě toho, jestli volíme tento pár. Pak se můžeme na tento rádek 0 a 1 divat jako na binární číslo, tedy všechny možné kombinace párů "cena/váha" projdeme následujícím způsobem:
+  - na začátku položme číslo rovno 0 (tedy žádný pár)
+  - zvětšujeme naše číslo o 1
+  - podiváme se na naše binární číslo a zkontrolujeme
+    - jestli páry s 1 vejdou dohromady do batohu a pokud ano
+      - jestli navíc mají větší společnou cenu než nalezené doposud řešení - pak přepíšeme staré řešení
+  - pokračujeme v bodě 2 pokud naše číslo je menší než 2^n
+  - máme nalezené nejlepší řešení 
+
+<note important>
+Jak se ukázalo na testovacích datach, instance problému s //n=22// se jíž počítá přibližně 30 minut a s //n=25// skoro 4 hodiny. Je to velmi drastický časový nárůst, a z toho lze za pomocí selského rozumu usoudit, že instance problému s //n=40// se bude počítat jíž několik dnů. Jelikož nemá smysl čekat natolik dlouho a navíc si můžeme upozornit (s tím nám pomůže výše uvedený algoritmus), že zvětšením instance problému nikdy nedostaneme čas běhu menší než naměřený čas predchozí instance. K tomu se jěště dá ukázat, že zvětšením instance problému k-krát dojde k nárůstu času minimálně k-krát, a tím dostáváme //asymptoticky stejný čas//. Tím pádem můžeme vypočítat čas pro //n>22// násobením naměřeného času instance //n=22// příslušným číslem. Toto číslo vypočítáme následijícím způsobem (jelikož se algoritmus využívá binární přístup): **2^(n - 22)**
+</note>
+
+
+==== Řešení heuristikou ====
+Řešení pomocí výše uvedených heuristik je skoro stejné. Liší se jenom v tom, podle čeho seřadíme naše páry "cena-váha":
+  * podle klesajícího poměru cena/váha
+  * podle rostoucí hmotnosti
+  * podle klesající ceny
+
+Pak procházíme seřazené pole od začátku a sčítáme páry pokud jejich celková hmotnost nepřekračuje zadanou limitu. V případě, že jíž nemůžeme přidat další pár - máme nalezené řešení.
+
+=== Popis kostry algoritmu ===
+Triviální z popisu postupu.
+
+===== Výsledky =====
+{{ :student:bobirdmi:start:average_time_of_bruteforce_algorithm.png?900 }}
+
+{{ :student:bobirdmi:start:average_time_of_bruteforce_algorithm_until_n_22.png?900 }}
+
+{{ :student:bobirdmi:start:average_time_of_heuristics.png?900 }}
+
+{{ :student:bobirdmi:start:average_relative_error_of_heuristics.png?900 }}
+
+{{ :student:bobirdmi:start:maximum_relative_error_of_heuristics.png?900 }}
+
+===== Závěr =====
+Z obrázků lze odvodit, že v závislosti na //n//:
+  * čas běhu //bruteforce algoritmu// roste **exponenciálně**
+  * čas běhu heuristik roste **lineárně**
+  * **nejrychlejší** je heuristika podle klesající ceny
+  * heuristika podle klesajícího poměru "cena/váha" má **nejmenší** chybovost
+    * **nejmenší** průměrna relativní chyba
+    * **nejmenší** maximální relativní chyba
+
+Kvalitu výsledků považuji za výbornou. Problém s velmi dlouhým počítáním //bruteforce algoritmu// byl vyřešen velmi dobře i dostatečně precizně, aby bylo možné usoudit o chování algoritmu z dlouhodobého hlediska.
