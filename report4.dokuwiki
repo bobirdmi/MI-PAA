@@ -1,0 +1,134 @@
+====== Zpráva k 4. úloze ======
+===== Specifikace =====
+==== Úloha ====
+Lze přečíst [[homeworks:04:start|zde]].
+
+==== Hardware & Software ====
+Notebook s:
+  * Windows 8.1 64-bit
+  * Intel Core i7-3630QM 
+  * 8GB RAM
+  * Jupyter Notebook s python 3.5
+
+===== Zvolený algoritmus =====
+Rozhodl jsem pracovat na genetickém algoritmu. Dobrý popis je [[http://www.obitko.com/tutorials/genetic-algorithms/index.php|zde]].
+
+Existuje řáda vylepšení standartního GA: migrační model, difúzní model, farmářský model atd. V této zprávě bude prozkoumán pouze **standartní GA**.
+
+===== Stručný popis genetického algoritmu =====
+V následujících bodech bude stručně popsán průběh standartního genetického algoritmu:
+  - inicializace původní populace (bud' náhodně nebo ne)
+  - selekce dvou rodičů
+    * //rank//
+    * //roulette//
+    * //tournament//
+  - křížení zvolených rodičů
+    * jednobodové (kříží se pouze bity **následující/předcházející** po **náhodně** zvoleném bitu)
+    * dvoubodové (kříží se bity **mezi dvěma náhodně** zvolenými bity)
+    * vícebodové či n-bodové (kříží se pouze //n// **náhodně** zvolených bitů)
+    * uniformní (kříží se **všechny** bity)
+  - mutace vytvořeného potomku
+    * jednobodová (mutuje **jeden náhodně** zvolený bit)
+    * dvoubodová či vícebodová či n-bodová (mutace //n// **náhodně** zvolených bitů)
+    * uniformní (mutace **všech** bitů)
+  - pokud elitismus je zapnutý
+    * předej nejlepšího jedince do další populace
+  - podle následujících způsobů rížení populace pokračuj v bodě 2
+    * nová generace nahradí starou (náhrada //en bloc//)
+    * častečná náhrada
+    * ustálená populace
+    * smíšená forma (//en bloc// + ustálená)
+
+==== Implementace ====
+Daná implementace genetického algoritmu podporuje všechny výše uvedené typy parametrů, avšak u řízení populace umí pouze //náhradu en bloc//.
+
+GA může bud' maximalizovat nebo minimalizovat hodnotu //fitness//. V daném případě používáme jako //fitness// relativní chybu, a tedy algoritmus bude **minimalizovat** relativní chybu.
+
+===== Hodnoty parametrů genetického algoritmu =====
+Hodnoty parametrů byly zafixovány na
+  * generation_num = 100 (počet generací)
+  * population size = 1000 (velikost populace)
+  * mut_type = 1 (typ mutace)
+  * mut_prob = 0.05 (pravděpodobnost mutace)
+  * cross_type = 1 (typ křížení)
+  * cross_prob = 0.95 (pravděpodobnost křížení)
+  * elitism = //True// (elitismus on/off)
+  * selection = //rank// (typ selekce rodičů)
+  * tournament_size = population size / 2 (v případě turnajové selekce)
+
+Jednotlivé parametry postupně měníme, ostatní zůstávají zafixované.
+
+==== Testované parametry genetického algoritmu ====
+Během experimentů byly pozorovány závislosti průměrné relativní chyby dané generace(rel. chyba jako fitness value) na:
+  * pravděpodobnosti mutace
+  * pravděpodobnosti křížení
+  * typu mutace
+  * typu křížení
+  * elitismus on/off
+  * typu selekce rodičů
+  * velikosti populace
+  * velikosti turnaje (v případě turnajové selekce)
+
+Také během experimentů byly pozorovány závislosti výpočetního času různých selekčních typů na velikosti populace.
+
+===== Výsledky =====
+<note tip>
+Experimenty byly provedeny na [[homeworks:knapsack:def|zkušebním problému batohu]] s velikostí instance //n=40// s **náhodně** generovanou původní populací.
+</note>
+
+<note important>
+Jelikož všechny výsledky GA **závisí** na náhodě kvůli operacím mutace a křížení (i když algoritmus snaží se minimalizovat/maximalizovat //fitness//),  nedocilíme ničeho užitečného průměrováním hodnot výpočetního času a relativní chyby různých instancí. Proto následující experimenty byly provedeny na jedné zvolené instanci.
+</note>
+
+==== Závislost relativní chyby (fitness value) ====
+{{:student:bobirdmi:start:hw4_mutation_probability.png?900|}}
+
+{{:student:bobirdmi:start:hw4_crossover_probability.png?900|}}
+
+{{:student:bobirdmi:start:hw4_mutation_type.png?900|}}
+
+{{:student:bobirdmi:start:hw4_crossover_type.png?900|}}
+
+{{:student:bobirdmi:start:hw4_elitism.png?900|}}
+
+{{:student:bobirdmi:start:hw4_selection_type.png?900|}}
+
+{{:student:bobirdmi:start:hw4_population_size.png?900|}}
+
+{{:student:bobirdmi:start:hw4_tournament_size.png?900|}}
+
+==== Závislost výpočetního času ====
+{{:student:bobirdmi:start:hw4_population_size_time.png?900|}}
+
+===== Závěr =====
+Z experimentů můžeme odvodit, že:
+  * relativní chyba (//fitness//)
+    * s rostoucí pravděpodobností mutace 
+      * **klesá** rychlost konvergence k optimu
+      * **ztrácíme** dosažené dobré výsledky (křížením nejlepších rodičů dostáváme kvůli mutaci i horšího potomka)
+    * s rostoucí pravděpodobností křížení **roste** i rychlost konvergence k optimu
+    * s zvětšením mutujících bitů 
+      * **klesá** rychlost konvergence k optimu
+      * **ztrácíme** dosažené dobré výsledky po křížení kvůli jejich mutaci
+    * podle typu křížení
+      * rychlost konvergence k "skoro" optimu je **nejnižší** u uniformního křížení
+      * uniformní křížení po dosažení "skoro" optima má **nejmenší** rozptyl
+      * jednobodové křížení má **nejrychlejší** konvergenci k "skoro" optimu
+      * jednobodové křížení hned po dosažení "skoro" optima má **pomalejší** konvergenci než uniformní křížení
+      * dvoubodové a vícebodové křížení 
+        * mají rychlou konvergenci k "skoro" optimu
+        * mají **nejpomalejší** konvergenci po dosažení "skoro" optima
+    * GA s zapnutým //elitismem// konverguje k optimu **rychleji** než s vypnutým
+    * GA s selekčním typem 
+      * //turnaj// (přes celou populaci) má **nejrychlejší** konvergenci k optimu (volí vždy nejlepší rodiče)
+      * //roulette// má **nejpomalejší konvergenci** k optimu
+    * GA s populací o velikosti 500 a selekčním typem //rank// má **nejrychlejší** konvergenci
+      * tedy větší populace **neznamená** rychlejší konvergenci k optimu
+    * turnaj přes celou populaci **nemusí** mít nejrychlejší konvergenci k optimu
+  * výpočetní čas
+    * selekčního typu //turnaj// roste **lineárně** s rostoucí velikostí populace
+    * selekčních typů //rank// a //roulette//
+      * roste **mírně exponenciálně**
+      * //rank// roste **rychleji** kvůli delším výpočtům při rotaci ruletového kola (hodnota //fitness// při //roulette// je mnohem menší než rank při //rank//)
+
+Genetický algoritmus velmi závisí na //náhodě// a navíc je heuristikou, což nezajištuje nalezení ani optima, ani vůbec nějakého dobrého řešení. Taky lze usoudit, že neexistuje žádná "nejlepší" konfigurace parametrů dobře řešící všechny problémy: GA je problémově a občas i instančně //závislý// algoritmus. 
