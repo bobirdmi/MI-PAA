@@ -14,3 +14,6 @@ data/*/
 
 # .txt files
 knapgen/*.inst.dat
+
+# data for the 5-th homework
+**/uf50-218/*

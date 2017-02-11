@@ -1,0 +1,57 @@
+====== Zpráva k 5. úloze ======
+===== Specifikace =====
+==== Úloha ====
+Lze přečíst [[homeworks:05:start|zde]].
+
+==== Hardware & Software ====
+Notebook s:
+  * Hardware
+    * Windows 8.1 64-bit
+    * Intel Core i7-3630QM 
+    * 8GB RAM
+  * Software
+    * Jupyter Notebook s python 3.5
+    * vlastní modul [[https://github.com/bobirdmi/genetic-algorithms|geneticalgs]]
+
+==== Použitý modul ====
+V dané praci byl využít vlastní pythonní modul [[https://github.com/bobirdmi/genetic-algorithms|geneticalgs]] verze **1.0**.
+
+===== Nastavení parametrů =====
+Genetické algoritmy (GA) jsou velmi závislé na definovaném problému a dokonce i na instancích příslušných danému problému. Proto je nutné správně přizpůsobit parametry GA zvolenému problému **3SAT**. Tedy musíme experimentálním způsobem stanovit následující parametry:
+  * druh selekce rodičů
+  * velikost počateční populace
+  * druh a pravděpodobnost mutace
+  * druh a pravděpodobnost křížení
+
+Některé parametry jako //elitismus// a //minimalizace/maximalizace fitness// lze stanovit i bez dalších experimentů (v případě druhu optimalizace to záleží na přístupu k řešení). //Elitismus// bude **stále zapnutý**, jelikož ovlivňuje pouze rychlost konvergence, nic víc.
+
+==== Druh selekce rodičů ====
+Aktuální implementace použitého modulu poskytuje 3 druhy selekce rodičů: //roulette wheel selection//, //rank wheel selection// a //tournament//. První druh není avšak moc užitečný, jelikož pravděpodobnost výběru rodiče je přímo úměrná hodnotě jeho //fitness//, což způsobuje rychlou konvergenci, ale za cenu ztráty divergence.
+
+Musíme tedy rozhodnout o teprve dvou druhů: //rank wheel selection// (stručně //rank//) a //tournament//.
+
+==== Velikost počateční populace ====
+TODO
+
+==== Mutace ====
+=== Druh mutace ===
+TODO
+
+=== Pravděpodobnost mutace ===
+Doporučená pravděpodobnost mutace je 0.5-1% (Beasley, 1993).
+
+==== Křížení ====
+=== Druh křížení ===
+TODO
+
+=== Pravděpodobnost křížení ===
+Doporučená pravděpodobnost křížení je 80-95% (Beasley, 1993).
+
+===== Výsledné optimální parametry =====
+TODO
+
+===== Výsledky =====
+TODO
+
+===== Závěr =====
+TODO 
