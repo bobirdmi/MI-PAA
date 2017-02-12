@@ -17,7 +17,7 @@ Notebook s:
 V dané praci byl využít vlastní pythonní modul [[https://github.com/bobirdmi/genetic-algorithms|geneticalgs]] verze **1.0**.
 
 ===== Zkušební instance =====
-**Řešitelné** zkušební instance (uf*) byly převzaty z [[http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html|]], jejich váhy byly náhodně vygenerovany.
+**Řešitelné** zkušební instance (uf*) byly převzaty z [[http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html|]], jejich váhy byly náhodně vygenerovany. Tyto instance byly zdola ořiznuty, aby poměr //počet klauzulí k počtu proměnným// byl roven 4.
 
 ===== Měření "výkonu" zvolené sady parametrů =====
 "Výkon" aktuálně testované sady parametrů je vypočítán podle počtu **různých** nalezených řešení //F(Y)=1//. Jelikož se jedná o nedeterministický algoritmus, bude spočítán **průměr** tohoto počtu na základě 10 měřění (větší počet měření by byl příliš časově náročný).
@@ -33,10 +33,10 @@ Některé parametry jako //elitismus// a //minimalizace/maximalizace fitness// l
 
 Pro potřeby experimentů defaultní hodnoty parametrů byly zafixované na následující hodnoty:
   * selekce = //rank//
-  * pravděpodobnost mutace = 0
-  * druh mutace = 1
-  * pravděpodobnost křížení = 1
-  * druh křížení = 1
+  * pravděpodobnost mutace = 0%
+  * druh mutace = jednobodová
+  * pravděpodobnost křížení = 100%
+  * druh křížení = jednobodové
   * počet generací = 20
   * velikost počateční populace = 1000
 
@@ -52,17 +52,35 @@ Musíme tedy rozhodnout o teprve dvou druhů: //rank wheel selection// (stručn�
 TODO
 
 ==== Mutace ====
-=== Druh mutace ===
-TODO
-
 === Pravděpodobnost mutace ===
 Doporučená pravděpodobnost mutace je 0.5-1% (Beasley, 1993). Podle tohoto doporučení a selského rozumu vyplývá, že má smysl pouze testování malé pravděpodobnosti mutace, protože s větší pravděpodobností přichází úplná náhodnost algoritmu.
 
-Pro testování použijeme následující pravděpodobnosti: 1%, 5%, 10%, 15%, 20%. Tabulka níže obsahuje průměrný počet různých nalezených řešení pro každou testovanou hodnotu. Tučně jsou označeny nejlepší a druhý nejlepší výsledky.
+Pro testování použijeme následující pravděpodobnosti: 1%, 5%, 10%, 15%, 20%. Tabulka níže obsahuje průměrný počet různých nalezených řešení pro každou testovanou hodnotu. Tučně jsou označeny nejlepší výsledky.
 
-|  ^  # generací = 20  ^^^^^^
+^  # generací = 20  ^^^^^^^
 |  ^  1%  ^  5%  ^  10%  ^  15%  ^  20%  ^
 ^ # řešení |  **1.9**  |  0.8  |  1.0  |  **2.9**  |  1.2  |
+
+Pro ověření a upřesnění otestujeme hodnoty kolem těchto výsledků
+
+^  # generací = 20  ^^^^^^^
+|  |  0.8%  |  1%  |  1.2%  |  13%  |  15%  |  17%  |
+^ # řešení |  1.2  |  **6.3**  |  0.8  |  0.2  |  **2.9**  |  **3.0**  |
+
+Dostali jsme nové potenciální hodnoty, proto spustíme algoritmus ještě jednou
+
+^  # generací = 20  ^^^^^^^
+|  ^  1%  ^  15%  ^  16%  ^  17%  ^  18%  ^
+^ # řešení |  **4.4**  |  0.3  |  0.4  |  1.5  |  **2.0**  |
+
+Z výsledků lze odvodit, že **nejlepší pravděpodobnost mutace je 1%**.
+
+=== Druh mutace ===
+Druh mutace určuje kolik náhodných bitů bude s danou pravděpodobností invertovány. Zase jako v případě pravděpodobnosti mutace má smysl testování pouze malých hodnot. Otestujeme následující hodnoty: 1, 2, 4, 6, 8, 10.
+
+^  # generací = 20  ^^^^^^^
+|  ^  1  ^  2  ^  4  ^  6  ^  8  ^  10  ^
+^ # řešení |    |    |    |    |    |    |
 
 ==== Křížení ====
 === Druh křížení ===
