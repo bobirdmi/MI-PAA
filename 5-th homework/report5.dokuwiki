@@ -20,7 +20,7 @@ V dané praci byl využít vlastní pythonní modul [[https://github.com/bobirdm
 **Řešitelné** zkušební instance (uf*) byly převzaty z [[http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html|]], jejich váhy byly náhodně vygenerovany.
 
 ===== Měření "výkonu" zvolené sady parametrů =====
-"Výkon" aktuálně testované sady parametrů je vypočítán podle počtu nalezených řešení //F(Y)=1//. Jelikož se jedná o nedeterministický algoritmus, bude spočítán **průměr** počtu nalezených řešení na základě 1000 měřění.
+"Výkon" aktuálně testované sady parametrů je vypočítán podle počtu **různých** nalezených řešení //F(Y)=1//. Jelikož se jedná o nedeterministický algoritmus, bude spočítán **průměr** tohoto počtu na základě 10 měřění (větší počet měření by byl příliš časově náročný).
 
 ===== Nastavení parametrů =====
 Genetické algoritmy (GA) jsou velmi závislé na definovaném problému a dokonce i na instancích příslušných danému problému. Proto je nutné správně přizpůsobit parametry GA zvolenému problému **3SAT**. Tedy musíme experimentálním způsobem stanovit následující parametry:
@@ -30,6 +30,15 @@ Genetické algoritmy (GA) jsou velmi závislé na definovaném problému a dokon
   * druh a pravděpodobnost křížení
 
 Některé parametry jako //elitismus// a //minimalizace/maximalizace fitness// lze stanovit i bez dalších experimentů (v případě druhu optimalizace to záleží na přístupu k řešení). //Elitismus// bude **stále zapnutý**, jelikož ovlivňuje pouze rychlost konvergence, nic víc.
+
+Pro potřeby experimentů defaultní hodnoty parametrů byly zafixované na následující hodnoty:
+  * selekce = //rank//
+  * pravděpodobnost mutace = 0
+  * druh mutace = 1
+  * pravděpodobnost křížení = 1
+  * druh křížení = 1
+  * počet generací = 20
+  * velikost počateční populace = 1000
 
 ==== Optimalizační kritérium ====
 GA se bude snažit **maximalizovat** počet splněných klauzulí (optimální počet klauzulí je fixní), a když nějaké řešení dosáhne optima, k jeho hodnotě //fitness// (optimální počet klauzulí) se připočte celková váha tohoto řešení. Toutou fintou docilíme toho, že GA stále hledá řešení //F(Y)=1//, ale také již nalezená řešení navzájem soupeří podle svých váh.
@@ -47,7 +56,13 @@ TODO
 TODO
 
 === Pravděpodobnost mutace ===
-Doporučená pravděpodobnost mutace je 0.5-1% (Beasley, 1993).
+Doporučená pravděpodobnost mutace je 0.5-1% (Beasley, 1993). Podle tohoto doporučení a selského rozumu vyplývá, že má smysl pouze testování malé pravděpodobnosti mutace, protože s větší pravděpodobností přichází úplná náhodnost algoritmu.
+
+Pro testování použijeme následující pravděpodobnosti: 1%, 5%, 10%, 15%, 20%. Tabulka níže obsahuje průměrný počet různých nalezených řešení pro každou testovanou hodnotu. Tučně jsou označeny nejlepší a druhý nejlepší výsledky.
+
+|  ^  # generací = 20  ^^^^^^
+|  ^  1%  ^  5%  ^  10%  ^  15%  ^  20%  ^
+^ # řešení |  **1.9**  |  0.8  |  1.0  |  **2.9**  |  1.2  |
 
 ==== Křížení ====
 === Druh křížení ===
