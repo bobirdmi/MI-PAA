@@ -16,6 +16,12 @@ Notebook s:
 ==== Použitý modul ====
 V dané praci byl využít vlastní pythonní modul [[https://github.com/bobirdmi/genetic-algorithms|geneticalgs]] verze **1.0**.
 
+===== Zkušební instance =====
+**Řešitelné** zkušební instance (uf*) byly převzaty z [[http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html|]], jejich váhy byly náhodně vygenerovany.
+
+===== Měření "výkonu" zvolené sady parametrů =====
+"Výkon" aktuálně testované sady parametrů je vypočítán podle počtu nalezených řešení //F(Y)=1//. Jelikož se jedná o nedeterministický algoritmus, bude spočítán **průměr** počtu nalezených řešení na základě 1000 měřění.
+
 ===== Nastavení parametrů =====
 Genetické algoritmy (GA) jsou velmi závislé na definovaném problému a dokonce i na instancích příslušných danému problému. Proto je nutné správně přizpůsobit parametry GA zvolenému problému **3SAT**. Tedy musíme experimentálním způsobem stanovit následující parametry:
   * druh selekce rodičů
@@ -24,6 +30,9 @@ Genetické algoritmy (GA) jsou velmi závislé na definovaném problému a dokon
   * druh a pravděpodobnost křížení
 
 Některé parametry jako //elitismus// a //minimalizace/maximalizace fitness// lze stanovit i bez dalších experimentů (v případě druhu optimalizace to záleží na přístupu k řešení). //Elitismus// bude **stále zapnutý**, jelikož ovlivňuje pouze rychlost konvergence, nic víc.
+
+==== Optimalizační kritérium ====
+GA se bude snažit **maximalizovat** počet splněných klauzulí (optimální počet klauzulí je fixní), a když nějaké řešení dosáhne optima, k jeho hodnotě //fitness// (optimální počet klauzulí) se připočte celková váha tohoto řešení. Toutou fintou docilíme toho, že GA stále hledá řešení //F(Y)=1//, ale také již nalezená řešení navzájem soupeří podle svých váh.
 
 ==== Druh selekce rodičů ====
 Aktuální implementace použitého modulu poskytuje 3 druhy selekce rodičů: //roulette wheel selection//, //rank wheel selection// a //tournament//. První druh není avšak moc užitečný, jelikož pravděpodobnost výběru rodiče je přímo úměrná hodnotě jeho //fitness//, což způsobuje rychlou konvergenci, ale za cenu ztráty divergence.
