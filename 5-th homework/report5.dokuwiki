@@ -17,7 +17,7 @@ Notebook s:
 V dané praci byl využít vlastní pythonní modul [[https://github.com/bobirdmi/genetic-algorithms|geneticalgs]] verze **1.0**.
 
 ===== Zkušební instance =====
-**Řešitelné** zkušební instance (uf*) byly převzaty z [[http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html|]], jejich váhy byly náhodně vygenerovany. Tyto instance byly zdola ořiznuty, aby poměr //počet klauzulí k počtu proměnných// byl **roven 4**.
+**Řešitelné** zkušební instance (uf*) byly převzaty z [[http://www.cs.ubc.ca/~hoos/SATLIB/benchm.html|]], jejich váhy byly náhodně vygenerovany. Tyto instance byly zdola oříznuty, aby poměr //počet klauzulí k počtu proměnných// byl **roven 4**. Pro nastavení parametrů genetického algoritmů byla použita instance //uf50-218//, která po oříznutí má 200 prvních klauzulí.
 
 ===== Měření "výkonu" zvolené sady parametrů =====
 "Výkon" aktuálně testované sady parametrů je vypočítán podle počtu **různých** nalezených řešení //F(Y)=1//. Jelikož se jedná o nedeterministický algoritmus, bude spočítán **průměr** tohoto počtu na základě 10 měřění (větší počet měření by byl příliš časově náročný).
@@ -105,7 +105,16 @@ Ověříme víteze a otestujeme jejich okolní hodnoty
 Z výsledků měření lze vidět, že nejlepší průměrnou hodnotu má 75%, ale stabilnější výsledky prokazuje 80% (jelikož 75% má v prvním řešení 0.3). Tedy **nejvyhovující pravděpodobnost křížení je 80%**.
 
 === Druh křížení ===
-TODO
+Jednobodové a dvoubodové křížení vyměňují bity v určitém náhodném intervalu, další typy křížení vyměňují jednotlivé náhodné bity. Jelikož struktura proměnných žádným způsobem nepopisuje strukturu příslušného boolevského výrazu, lze předpokládat, že lepší výsledky budou mít druhy křížení, která vyměňují úplně náhodné bity (což odpovídá dvoubodovému a více křížení). Následující hodnoty byly otestovány: 1 (jednobodové), 2 (dvoubodové) a křížení jednotlivých náhodných 3 (6% od celkového počtu bitů - 50 bitů = 50 proměnných), 10 (20%), 20 (40%), 30 (60%), 40 (80%) bitů.
+
+^  # generací = 20  ^^^^^^^^
+|  ^  1  ^  2  ^  3  ^  10  ^  20  ^  30  ^  40  ^
+^  # řešení 1  |  0.8  |  **2.1**  |  1.0  |  1.8  |  1.6  |  **2.6**  |  1.9  |
+^  # řešení 2  |  **2.5**  |  1.6  |  **3.0**  |  2.0  |  1.4  |  0.4  |  1.7  |
+^  # řešení 3  |  0.7  |  1.0  |  **2.7**  |  2.5  |  2.1  |  **4.4**  |  **2.7**  |
+^  průměr  |  2.0  |  1.57  |  **2.23**  |  2.1  |  1.7  |  **2.47**  |  2.1  |
+
+3-bodové a 30-bodové křížení mají skoro stejné výsledky, ale 3-bodové má stabilnější (0.4 u 30 ve druhém řešení). Tedy **nejvyhovující druh je tři-bodové křížení**.
 
 ==== Druh selekce rodičů ====
 Aktuální implementace použitého modulu poskytuje 3 druhy selekce rodičů: //roulette wheel selection//, //rank wheel selection// a //tournament//. První druh není avšak moc užitečný, jelikož pravděpodobnost výběru rodiče je přímo úměrná hodnotě jeho //fitness//, což způsobuje rychlou konvergenci, ale za cenu ztráty divergence.
