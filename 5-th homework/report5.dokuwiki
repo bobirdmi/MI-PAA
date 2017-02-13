@@ -119,7 +119,18 @@ Jednobodové a dvoubodové křížení vyměňují bity v určitém náhodném i
 ==== Druh selekce rodičů ====
 Aktuální implementace použitého modulu poskytuje 3 druhy selekce rodičů: //roulette wheel selection//, //rank wheel selection// a //tournament//. První druh není avšak moc užitečný, jelikož pravděpodobnost výběru rodiče je přímo úměrná hodnotě jeho //fitness//, což způsobuje rychlou konvergenci, ale za cenu ztráty divergence.
 
-Musíme tedy rozhodnout o teprve dvou druhů: //rank wheel selection// (stručně //rank//) a //tournament//.
+Musíme tedy rozhodnout o teprve dvou druhů: //rank wheel selection// (stručně //rank//) a //tournament//. Turnáj byl proveden přes celou populaci.
+
+^  # generací = 20  ^^^
+|  ^  rank  ^  tournament  ^
+^  # řešení 1  |  0.2  |  **2.6**  |
+^  # řešení 2  |  **0.5**  |  0.0  |
+^  # řešení 3  |  0.5  |  **0.7**  |
+^  # řešení 4  |  **0.5**  |  0.0  |
+^  # řešení 5  |  **0.3**  |  0.0  |
+^  průměr  |  0.4  |  **0.66**  |
+
+Z výsledků je jasně vidět, že turnáj přes celou populaci je velmi nestabilní, ale //rank// má úplně opačné chování.
 
 ==== Velikost počateční populace ====
 TODO
